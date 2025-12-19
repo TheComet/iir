@@ -10,7 +10,7 @@ pairs = (
     if len(pair) > 0
 )
 x, y = map(np.array, zip(*pairs))
-t = np.linspace(0, 0.3, len(x))
+t = np.linspace(0, len(x)/1000, len(x))
 
 color_table = (
     ("#FF6060", "#FF8080", "#C02020"),

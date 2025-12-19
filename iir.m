@@ -13,4 +13,3 @@ f = 5;
 x = cos(2*pi*t*f);
 y = sosfilt(sos, x);
 plot(t, x, '-o', t, y, '-o');
-%scatter(t, x, t, y);

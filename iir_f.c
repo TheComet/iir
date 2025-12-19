@@ -85,9 +85,27 @@ static void passband_test(void) {
     }
 }
 
+static void sweepsine_test(void) {
+    struct biquad_state state[3] = {0};
+    const double fs = 1000;
+    double f = 0;
+    double t = 0;
+    while (f < fs/4) {
+        double x = sin(2*M_PI*f*t);
+        double y = filter(x, state, coeffs);
+        printf("%f,%f\n", x, y);
+        t += 1/fs;
+        f += 0.2;
+    }
+}
+
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <test index>\n", argv[0]);
+        fprintf(stderr, "  Test 1: Cosine f=200Hz\n");
+        fprintf(stderr, "  Test 2: Impulse reponse\n");
+        fprintf(stderr, "  Test 3: Cosine f=5Hz\n");
+        fprintf(stderr, "  Test 4: Sine Sweep f=0..250Hz\n");
         return EXIT_FAILURE;
     }
 
@@ -95,6 +113,7 @@ int main(int argc, char* argv[]) {
         case 1: stopband_test(); break;
         case 2: impulse_response_test(); break;
         case 3: passband_test(); break;
+        case 4: sweepsine_test(); break;
         default: fprintf(stderr, "Unknown test index: %s\n", argv[1]); return EXIT_FAILURE;
     }
 
