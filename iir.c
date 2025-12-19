@@ -12,10 +12,6 @@ struct biquad_coeffs {
     int16_t b0, b1, b2;
     int16_t a1, a2;
 };
-struct biquad_coeffs_f {
-    double b0, b1, b2;
-    double a1, a2;
-};
 
 const int Q = 14;
 const int K = 1 << (Q-1);
@@ -24,20 +20,11 @@ static const struct biquad_coeffs coeffs[] = {
    { 16384, 32767, 16384, -18727,  6763 },
    { 16384, 32641, 16257, -23009, 12057 },
 };
-static const struct biquad_coeffs_f coeffs_f[] = {
-    { 3.4054e-04, 6.8373e-04, 3.4320e-04, -1.0321e+00, 2.7571e-01 },
-    { 1.0000e+00, 2.0000e+00, 1.0000e+00, -1.1430e+00, 4.1280e-01 },
-    { 1.0000e+00, 1.9922e+00, 9.9224e-01, -1.4044e+00, 7.3592e-01 },
-};
 
 struct biquad_state {
     int16_t x1, x2;
     int16_t y1, y2;
     int16_t saved_fraction;
-};
-struct biquad_state_f {
-    double x1, x2;
-    double y1, y2;
 };
 
 static int16_t filter(int16_t input, struct biquad_state* state, const struct biquad_coeffs* coeffs) {
@@ -61,29 +48,6 @@ static int16_t filter(int16_t input, struct biquad_state* state, const struct bi
         state[i].y2 = state[i].y1;
         state[i].y1 = output;
         state[i].saved_fraction = frac;
-
-        input = output;
-    }
-
-    return output;
-}
-
-static double filter_f(double input, struct biquad_state_f* state, const struct biquad_coeffs_f* coeffs) {
-    int i;
-    double output;
-
-    for (i = 0; i != 3; ++i) {
-        output = 0;
-        output += coeffs[i].b0 * input;
-        output += coeffs[i].b1 * state[i].x1;
-        output += coeffs[i].b2 * state[i].x2;
-        output -= coeffs[i].a1 * state[i].y1;
-        output -= coeffs[i].a2 * state[i].y2;
-
-        state[i].x2 = state[i].x1;
-        state[i].x1 = input;
-        state[i].y2 = state[i].y1;
-        state[i].y1 = output;
 
         input = output;
     }
