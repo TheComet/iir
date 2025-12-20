@@ -2,12 +2,12 @@ clear all, close all;
 pkg load signal;
 
 fs = 1000; fg = 100;
-[B, A] = butter(6, fg/(fs/2));
+[B, A] = butter(8, fg/(fs/2));
 [sos, G] = tf2sos(B, A);
 
 % Redistribute gain evenly among numerator coefficients
-num_stages = length(sos(:,1))
-gain_per_stage = G^(1/num_stages)
+num_stages = length(sos(:,1));
+gain_per_stage = G^(1/num_stages);
 sos(:,1:3) *= gain_per_stage;
 
 sos_q = round(sos*2^14);
