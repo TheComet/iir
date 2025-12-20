@@ -19,6 +19,10 @@ struct biquad_coeffs {
     int16_t b0, b1, b2;
     int16_t a1, a2;
 };
+struct biquad_state {
+    int16_t history[N*2+2];
+    int16_t saved_fractions[N];
+};
 
 static const struct biquad_coeffs coeffs[N] = {
 #if N == 3
@@ -36,36 +40,31 @@ static const struct biquad_coeffs coeffs[N] = {
 #endif
 };
 
-struct biquad_state {
-    int16_t x1, x2;
-    int16_t y1, y2;
-    int16_t saved_fraction;
-};
-
 static int16_t filter(int16_t input, struct biquad_state* state, const struct biquad_coeffs* coeffs) {
     int i;
     int16_t output, frac;
 
     for (i = 0; i != N; ++i) {
-        int32_t acc = state[i].saved_fraction;
+        int32_t acc = state->saved_fractions[i];
 
         acc += coeffs[i].b0 * input;
-        acc += coeffs[i].b1 * state[i].x1;
-        acc += coeffs[i].b2 * state[i].x2;
-        acc -= coeffs[i].a1 * state[i].y1;
-        acc -= coeffs[i].a2 * state[i].y2;
+        acc += coeffs[i].b1 * state->history[i*2+0];
+        acc += coeffs[i].b2 * state->history[i*2+1];
+        acc -= coeffs[i].a1 * state->history[i*2+2];
+        acc -= coeffs[i].a2 * state->history[i*2+3];
 
         output = (int16_t)(acc >> Q);
         frac = (int16_t)(acc - (output << Q));
 
-        state[i].x2 = state[i].x1;
-        state[i].x1 = input;
-        state[i].y2 = state[i].y1;
-        state[i].y1 = output;
-        state[i].saved_fraction = frac;
+        state->history[i*2+1] = state->history[i*2+0];
+        state->history[i*2+0] = input;
+        state->saved_fractions[i] = frac;
 
         input = output;
     }
+
+    state->history[i*2+1] = state->history[i*2+0];
+    state->history[i*2+0] = input;
 
     return output;
 }
