@@ -1,29 +1,33 @@
-Quick demo on how a simple IIR filter is implemented using cascaded biquads
+Demo on how an IIR  filter can be implemented using cascaded biquads and shared
+state optimization.
 
-The executable has three tests built into it.
-
-Test  1 will generate a cosine at f=200 Hz and pass it through the filter.  The
-filter is a Butterworth filter  with  fg=100  Hz,  meaning,  the  output of the
-filter will be an attenuated cosine.
+Compile the executable with:
 
 ```
-make && ./iir 1 | ./plot.py
+make
 ```
 
-Test 2 measures the impulse response of the filter:
+The executable has six tests built into it. You can specify which test you want
+to run as the first argument:
 
 ```
-make && ./iir 2 | ./plot.py
+./iir <test number>
 ```
 
-Test 3 will generate a  cosine  at  f=5  Hz,  which  is  in the passband of the
-filter.  The   output   should   be  an  identical  cosine,  with  some  delay.
+The  program  will  write  the  input  and output signals to stdout. There is a
+```plot.py``` script which  can read the output and generate a visual. You will
+need Python 3 with matplotlib and numpy installed:
 
 ```
-make && ./iir 3 | ./plot.py
+./iir 1 | ./plot.py
+```
+
+```make plot``` is a shorthand for ```make &&  ./iir  1 | ./plot.py```. You can
+set the test number using the environment variable ```CASE```:
+
+```
+make plot CASE=1
 ```
 
 Additionally, there is an identical implementation ```iir_f.c``` using floating
 point numbers instead of integers, for reference.
-
-You will need Python 3 with matplotlib and numpy installed.
