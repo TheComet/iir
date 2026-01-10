@@ -224,7 +224,6 @@ static void slow_random_signal_test(void) {
     }
 }
 
-
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <test index>\n", argv[0]);

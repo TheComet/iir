@@ -2,3 +2,5 @@
 /venv
 /iir
 /iir_f
+/.gdbinit
+/.clangd
